@@ -9,5 +9,6 @@ Content
 - 0x05-React_State
 - 0x06-React_Immutable
 
-# Author: Auwal Linus
-linkedin.com/in/auwal-linus-a3b632210/
+## Author: Auwal Linus
+[<img src="https://img.shields.io/badge/Twitter-1DA1F2.svg?&style=plastic&logo=twitter&logoColor=white"/>](https://twitter.com/LinusAuwal)
+[<img src="https://img.shields.io/badge/Linkedin-0A66C2.svg?&style=plastic&logo=linkedin&logoColor=white"/>](https://www.linkedin.com/in/auwalliinus)
