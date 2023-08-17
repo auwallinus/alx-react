@@ -1,121 +1,123 @@
-import React from 'react';
-import Header from '../Header/Header';
-import Footer from '../Footer/Footer';
-import Notifications from '../Notifications/Notifications';
-import Login from '../Login/Login';
-import CourseList from '../CourseList/CourseList';
-import PropTypes from 'prop-types';
-import { getLatestNotification } from '../utils/utils';
-import BodySection from '../BodySection/BodySection';
+import React from "react";
+import PropTypes from "prop-types";
+import { css, StyleSheet } from 'aphrodite';
+import Notifications from "../Notifications/Notifications";
+import Footer from "../Footer/Footer";
+import Header from "../Header/Header";
+import Login from "../Login/Login";
+import CourseList from "../CourseList/CourseList";
+import { getLatestNotification } from "../utils/utils";
 import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom';
-import { StyleSheet, css } from 'aphrodite';
+import BodySection from "../BodySection/BodySection";
+
+
+const listCourses = [
+  {id: 1, name: 'ES6', credit: 60},
+  {id: 2, name: 'Webpack', credit: 20},
+  {id: 3, name: 'React', credit: 40}
+]
+
+const listNotifications = [
+  {id: 1, type: 'default', value: 'New course available'},
+  {id: 2, type: 'urgent', value: 'New resume available'},
+  {id: 3, type: 'urgent', html: { __html: getLatestNotification() }}
+]
+
+const styles = StyleSheet.create({
+  app: {
+    borderBottom: "3px solid #e14852",
+    width: "100%"
+  },
+  bodySmall: {
+    marginBottom: '150px',
+    textAlign: 'left',
+    display: 'flex',
+    flexWrap: 'wrap'
+  },
+  footer: {
+    borderTop: "3px solid #e14852",
+    display: "flex",
+    justifyContent: "center",
+    fontStyle: "italic",
+    width: "100%"
+  }
+})
 
 class App extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
-    this.isLoggedIn = props.isLoggedIn;
-    this.logOut = props.logOut;
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.listCourses = [
-      { id: 1, name: 'ES6', credit: 60 },
-      { id: 2, name: 'Webpack', credit: 20 },
-      { id: 3, name: 'React', credit: 40 }
-    ];
-
-    this.listNotifications = [
-      { id: 1, value: 'New course available', type: 'default' },
-      { id: 2, value: 'New resume available', type: 'urgent' },
-      { id: 3, html: { __html: getLatestNotification() }, type: 'urgent' }
-    ];
+    this.handlePress = this.handlePress.bind(this)
+    this.handleDisplayDrawer = this.handleDisplayDrawer.bind(this)
+    this.handleHideDrawer = this.handleHideDrawer.bind(this)
     this.state = {
       displayDrawer: false
-    };
-    this.handleDisplayDrawer = this.handleDisplayDrawer.bind(this);
-    this.handleHideDrawer = this.handleHideDrawer.bind(this);
+    }
   }
 
-  handleDisplayDrawer () {
+  componentDidMount() {
+    window.addEventListener('keydown', this.handlePress)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.handlePress)
+  }
+
+  handlePress(event) {
+    if (event.ctrlKey && event.key === 'h') {
+      alert('Logging you out');
+      this.props.logOut()
+    }
+  }
+
+  handleDisplayDrawer() {
     this.setState({
       displayDrawer: true
-    });
-  }
+    })
+  }  
 
-  handleHideDrawer () {
+  handleHideDrawer() {
     this.setState({
       displayDrawer: false
-    });
-  }
-
-  componentDidMount () {
-    if (typeof window !== 'undefined') {
-      window.addEventListener('keydown', this.handleKeyDown);
-    }
-  }
-
-  componentWillUnmount () {
-    if (typeof window !== 'undefined') {
-      window.removeEventListener('keydown', this.handleKeyDown);
-    }
-  }
-
-  handleKeyDown (event) {
-    event.preventDefault();
-    if (event.key === 'h' && event.ctrlKey) {
-      alert('Logging you out');
-      this.logOut();
-    }
+    })
   }
 
   render () {
-    return (
-      <>
-        <Notifications
-          listNotifications={this.state.listNotifications}
-          displayDrawer={this.state.displayDrawer}
-          handleDisplayDrawer={this.handleDisplayDrawer} handleHideDrawer={this.handleHideDrawer}
-        />
-        <div className={css(styles.App)}>
-          <Header />
-          <main className={css(styles.Main)}>
-            {this.props.isLoggedIn
-              ? <BodySectionWithMarginBottom title='Course list'><CourseList listCourses={this.state.listCourses} /></BodySectionWithMarginBottom>
-              : <BodySectionWithMarginBottom title='Log in to continue'><Login /></BodySectionWithMarginBottom>}
-            <BodySection title='News from the School'>
-              <p>
-                A town hall different from bala blu, blue blu bulaba. broom broom broom brooooooooom. Bala blu blue blu bulaba. The farmers will make more money. Your lunch will not be imported, cassava garri ewa and ehhh ehhhhnn. The farmer will make money, the dinner would be cassava, eba, ewa and everything.
-              </p>
-            </BodySection>
-          </main>
-          <Footer />
-        </div>
-      </>
+    const { displayDrawer } = this.state
+    return(  
+    <>
+      <Notifications listNotifications={listNotifications} displayDrawer={displayDrawer} handleDisplayDrawer={this.handleDisplayDrawer} handleHideDrawer={this.handleHideDrawer} />
+      <div className={css(styles.app)}>
+        <Header />
+      </div>
+      <div className={css(styles.body, styles.bodySmall)}>
+        {!this.props.isLoggedIn ? 
+          <BodySectionWithMarginBottom title="Log in to continue">
+            <Login /> 
+          </BodySectionWithMarginBottom> : 
+          <BodySectionWithMarginBottom title="Course list">
+            <CourseList listCourses={listCourses}/>
+          </BodySectionWithMarginBottom>
+        }
+        <BodySection title="News from the School">
+          <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Facere, temporibus. Totam, quis quo provident magni reprehenderit nulla eaque. A, illo?</p>
+        </BodySection>
+      </div>
+      <div className={css(styles.footer)}>
+        <Footer />
+      </div>
+    </>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  App: {
-    margin: 0,
-    padding: 0,
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  Main: {
-    flex: 1
-  }
-});
-
 App.defaultProps = {
   isLoggedIn: false,
-  logOut () {
-
-  }
+  logOut: () => undefined
 };
 
 App.propTypes = {
   isLoggedIn: PropTypes.bool,
-  logOut: PropTypes.func
+  logOut: PropTypes.func,
 };
 
 export default App;
